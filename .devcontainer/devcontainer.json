@@ -1,0 +1,132 @@
+{
+    "name": "Weather Agent Dev Container",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "..",
+        "args": {
+            "VARIANT": "3.11"
+        }
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "configureZshAsDefaultShell": true,
+            "installOhMyZsh": true,
+            "upgradePackages": true,
+            "username": "vscode",
+            "userUid": "automatic",
+            "userGid": "automatic"
+        },
+        "ghcr.io/devcontainers/features/python:1": {
+            "version": "3.11",
+            "installTools": true,
+            "optimize": true
+        },
+        "ghcr.io/devcontainers/features/git:1": {
+            "ppa": true,
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {
+            "version": "latest",
+            "enableNonRootDocker": "true",
+            "moby": "true"
+        },
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "18"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.pylance",
+                "ms-python.black-formatter",
+                "ms-python.debugpy",
+                "ms-toolsai.jupyter",
+                "njpwerner.autodocstring",
+                "eamodio.gitlens",
+                "rangav.vscode-thunder-client",
+                "ms-azuretools.vscode-docker",
+                "redhat.vscode-yaml",
+                "ms-vscode.vscode-json",
+                "bradlc.vscode-tailwindcss",
+                "esbenp.prettier-vscode",
+                "formulahendry.auto-rename-tag",
+                "christian-kohler.path-intellisense",
+                "visualstudioexptteam.vscodeintellicode"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.pylintEnabled": false,
+                "python.linting.flake8Enabled": false,
+                "python.linting.mypyEnabled": true,
+                "python.formatting.provider": "black",
+                "python.formatting.blackPath": "/usr/local/bin/black",
+                "python.testing.pytestEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "python.testing.pytestArgs": [
+                    "tests"
+                ],
+                "files.exclude": {
+                    "**/__pycache__": true,
+                    "**/*.pyc": true,
+                    ".pytest_cache": true,
+                    ".coverage": true,
+                    "htmlcov": true,
+                    ".mypy_cache": true,
+                    ".ruff_cache": true,
+                    "**/.DS_Store": true
+                },
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": true
+                },
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "git.enableSmartCommit": true,
+                "git.confirmSync": false,
+                "files.trimTrailingWhitespace": true,
+                "files.insertFinalNewline": true,
+                "workbench.colorTheme": "Default Dark+",
+                "workbench.iconTheme": "vs-seti"
+            }
+        }
+    },
+    "forwardPorts": [8000, 8501, 6379, 9090, 3000],
+    "portsAttributes": {
+        "8000": {
+            "label": "FastAPI Server",
+            "onAutoForward": "notify"
+        },
+        "8501": {
+            "label": "Streamlit App",
+            "onAutoForward": "openBrowser"
+        },
+        "6379": {
+            "label": "Redis",
+            "onAutoForward": "silent"
+        },
+        "9090": {
+            "label": "Prometheus",
+            "onAutoForward": "ignore"
+        },
+        "3000": {
+            "label": "Grafana",
+            "onAutoForward": "ignore"
+        }
+    },
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "remoteUser": "vscode",
+    "containerEnv": {
+        "PYTHONPATH": "/workspaces/my-agent-project",
+        "ENVIRONMENT": "development",
+        "LOG_LEVEL": "DEBUG"
+    },
+    "mounts": [
+        "source=${localWorkspaceFolder}/.env,target=/workspaces/my-agent-project/.env,type=bind,consistency=cached",
+        "source=weather-agent-vscode-extensions,target=/home/vscode/.vscode-server/extensions,type=volume"
+    ],
+    "runArgs": [
+        "--init"
+    ]
+}

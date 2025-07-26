@@ -1,0 +1,81 @@
+version: '3.8'
+
+# Development Docker Compose - simplified for local development
+services:
+  # Weather Agent API Service (Development)
+  weather-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    container_name: weather-agent-api-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-true}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-weather-agent-dev}
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app  # Mount source code for hot reload
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    command: ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    networks:
+      - weather-dev-network
+
+  # Streamlit Web Interface (Development)
+  weather-ui-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: streamlit
+    container_name: weather-agent-ui-dev
+    ports:
+      - "8501:8501"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-true}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-weather-agent-dev}
+      - LOG_LEVEL=DEBUG
+      - ENVIRONMENT=development
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app  # Mount source code for hot reload
+      - ./logs:/app/logs
+      - ./data:/app/data
+    restart: unless-stopped
+    command: ["streamlit", "run", "streamlit_app.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--server.runOnSave", "true"]
+    networks:
+      - weather-dev-network
+
+  # Redis for development (optional, lightweight)
+  redis-dev:
+    image: redis:7-alpine
+    container_name: weather-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    restart: unless-stopped
+    networks:
+      - weather-dev-network
+    profiles:
+      - with-redis
+
+volumes:
+  redis_dev_data:
+    driver: local
+
+networks:
+  weather-dev-network:
+    driver: bridge

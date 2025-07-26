@@ -1,0 +1,82 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(python:*)",
+      "Bash(echo)",
+      "Bash(tree:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(chmod:*)",
+      "Bash(pip install:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ],
+    "file_operations": {
+      "read": true,
+      "write": true,
+      "create": true,
+      "delete": false
+    },
+    "directory_operations": {
+      "read": true,
+      "create": true,
+      "list": true
+    },
+    "network_access": {
+      "enabled": true,
+      "allowed_domains": [
+        "python.langchain.com",
+        "docs.langchain.com",
+        "api.openai.com",
+        "api.anthropic.com",
+        "github.com",
+        "pypi.org"
+      ]
+    },
+    "code_execution": {
+      "python": true,
+      "shell": true,
+      "install_packages": true
+    }
+  },
+  "project_settings": {
+    "name": "LangChain Context Engineering",
+    "description": "LangChain application development using context engineering principles",
+    "python_version": "3.9+",
+    "virtual_environment": "venv",
+    "test_framework": "pytest",
+    "linting": {
+      "enabled": true,
+      "tools": [
+        "black",
+        "flake8",
+        "mypy"
+      ]
+    }
+  },
+  "langchain_settings": {
+    "default_llm": "ChatOpenAI",
+    "default_temperature": 0.7,
+    "max_tokens": 1000,
+    "streaming": true,
+    "verbose_chains": true,
+    "memory_type": "ConversationBufferWindowMemory",
+    "vector_store": "Chroma",
+    "embedding_model": "OpenAIEmbeddings"
+  },
+  "testing": {
+    "coverage_threshold": 80,
+    "test_patterns": [
+      "test_*.py",
+      "*_test.py"
+    ],
+    "mock_external_apis": true,
+    "performance_benchmarks": true
+  },
+  "documentation": {
+    "auto_generate_docstrings": true,
+    "include_type_hints": true,
+    "example_usage": true
+  }
+}
